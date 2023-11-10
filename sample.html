@@ -1,0 +1,207 @@
+1.)UDP:
+import java.io.*;
+import java.net.*;
+class UDPClient
+{
+ public static DatagramSocket clientsocket;
+ public static DatagramPacket dp;
+ public static BufferedReader dis;
+ public static InetAddress ia;
+ public static byte buf[] = new byte[1024];
+ public static int cport = 789, sport = 790;
+ public static void main(String[] a) throws IOException
+ {
+ clientsocket = new DatagramSocket(cport);
+ dp = new DatagramPacket(buf, buf.length);
+ dis = new BufferedReader(new InputStreamReader(System.in));
+ ia = InetAddress.getLocalHost();
+ System.out.println("Client is RUNNING... Type 'STOP' to Quit");
+ while (true)
+ {
+ System.out.print("Client : ");
+ String str = new String(dis.readLine());
+ buf = str.getBytes();
+ if (str.equals("STOP"))
+ {
+System.out.println(" - TERMINATED - ");
+ clientsocket.send(new DatagramPacket(buf, str.length(), ia, sport));
+ break;
+ }
+ clientsocket.send(new DatagramPacket(buf, str.length(), ia, sport));
+ clientsocket.receive(dp);
+ String str2 = new String(dp.getData(), 0, dp.getLength());
+ System.out.println("Server : " + str2);
+ }
+ clientsocket.close();
+ }
+}
+<br>
+<br>
+<br>
+import java.io.*;
+import java.net.*;
+
+class UDPServer{
+public static DatagramSocket serversocket;
+public static DatagramPacket dp;
+public static BufferedReader reader;
+public static InetAddress ia;
+public static byte buff[] = new byte[1024];
+public static int cport=789, sport=790;
+
+public static void main(String[] args) throws IOException{
+serversocket = new DatagramSocket(sport);
+dp = new DatagramPacket(buff, buff.length);
+reader = new BufferedReader(new InputStreamReader(System.in));
+ia = InetAddress.getLocalHost();
+System.out.println("server is running...");
+
+while(true){
+serversocket.receive(dp);
+String str = new String(dp.getData(), 0, dp.getLength());
+
+if(str.equals("STOP")){
+System.out.println("-TERMINATED-");
+break;
+}
+System.out.println("Client:" + str);
+System.out.println("Server:");
+String str1 = new String(reader.readLine());
+buff = str1.getBytes();
+serversocket.send(new DatagramPacket(buff, str1.length(), ia, cport));
+}
+serversocket.close();
+}
+}
+<br>
+<br>
+<br>
+2.)FTP:
+import java.io.*;
+import java.net.*;
+
+public class FTPClient{
+public static void main(String[] args){
+try{
+
+Socket client = new Socket("127.0.0.1",10000);
+PrintWriter writer = new PrintWriter(client.getOutputStream());
+writer.println("sample.html");
+writer.flush();
+
+BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+String str = null;
+while((str = reader.readLine()) != null){
+System.out.println(str);
+}
+reader.close();
+client.close();
+}
+catch(Exception e){
+System.out.println("Connection Terminated By Server");
+}
+
+}
+
+}
+<br>
+<br>
+<br>
+import java.io.*;
+import java.net.*;
+public class FTPServer
+{
+public static void main (String args[])
+{
+ try
+ {
+ 
+ServerSocket server = new ServerSocket(10000);
+ 
+ Socket client;
+client = server.accept();
+
+BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+String filename = reader.readLine();
+PrintWriter writer = new PrintWriter (client.getOutputStream());
+FileInputStream fileStream = new FileInputStream( new File(filename));
+int ch;
+while ( ( ch = fileStream.read() ) != -1 )
+{
+writer.write(ch);
+writer.flush();
+}
+writer.close();
+ server.close();
+ }
+catch (Exception e)
+{
+e.printStackTrace();
+}
+}
+}
+<br>
+<br>
+<br>
+3.)HTTP
+import java.io.*;
+import java.net.*;
+
+public class http{
+public static void main(String[] args) throws IOException{
+URI uri = URI.create("https://www.youtube.com/");
+HttpURLConnection con = (HttpURLConnection) uri.toURL().openConnection();
+con.setRequestMethod("GET");
+BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+String str;
+while((str = reader.readLine()) != null){
+System.out.println(str);
+}
+reader.close();
+}
+}
+<br>
+<br>
+<br>
+4.)XML:
+import java.io.*;
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import java.util.*;
+
+public class parser{
+public static void main(String[] args) throws Exception{
+
+DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+DocumentBuilder builder = factory.newDocumentBuilder();
+Document document = builder.parse(new File("trials.xml"));
+
+document.getDocumentElement().normalize();
+
+Element root = document.getDocumentElement();
+Scanner s =new Scanner(System.in);
+System.out.println("Enter id no:");
+String id = s.next();
+
+NodeList nlist = document.getElementsByTagName("captain");
+
+System.out.println("The root tag is:" + root.getNodeName());
+
+for(int i=0;i<nlist.getLength();i++)
+{
+Node node = nlist.item(i);
+if(node.getNodeType() ==node.ELEMENT_NODE){
+Element e = (Element)node;
+
+if(e.getAttribute("id").equals(id)){
+System.out.println("ID NO:" + e.getAttribute("id"));
+System.out.println("NAME:" + e.getElementsByTagName("name").item(0).getTextContent());
+}
+}
+}
+}
+}
+<br>
+<br>
+<br>
